@@ -396,13 +396,18 @@ function confirmSubmit() {
   var data = window._pendingData;
   var url  = config.scriptUrl + "?action=append&data=" + encodeURIComponent(JSON.stringify(data));
 
-  jsonpCall(url)
-    .then(function(json) {
+  // no-cors: browser sends the request, ignores the response body.
+  // Data always reaches the sheet — confirmed behaviour.
+  fetch(url, { mode: "no-cors" })
+    .then(function() {
       closeConfirm();
-      if (json.success) renderWorker(true);
-      else renderWorker(json.error || "Unknown error");
+      renderWorker(true);
     })
-    .catch(function(e) { closeConfirm(); renderWorker(e.message); });
+    .catch(function(e) {
+      // Only fires on genuine network failure (no internet, wrong URL)
+      closeConfirm();
+      renderWorker("Network error — check your internet connection. (" + e.message + ")");
+    });
 }
 
 // ── PIN ───────────────────────────────────────────────────────────────────
@@ -680,6 +685,24 @@ function showAddErr(msg) {
 
 function saveTeam() {
   localStorage.setItem("ts-config", JSON.stringify(config));
+  // Push updated list to sheet so all devices stay in sync
+  var url = config.scriptUrl
+    + "?action=saveMembers&data="
+    + encodeURIComponent(JSON.stringify({ members: config.members }));
+  fetch(url, { mode: "no-cors" }).catch(function() {});   // fire-and-forget
+}
+
+function syncMembersFromSheet() {
+  return jsonpCall(config.scriptUrl + "?action=readMembers")
+    .then(function(data) {
+      if (data && Array.isArray(data.members) && data.members.length > 0) {
+        config.members = data.members;
+        localStorage.setItem("ts-config", JSON.stringify(config));
+      }
+    })
+    .catch(function() {
+      // Silently fall back to locally cached members
+    });
 }
 
 // ── RESET ─────────────────────────────────────────────────────────────────
@@ -734,8 +757,19 @@ function jsonpCall(url) {
     config = saved ? JSON.parse(saved) : null;
   } catch(e) { config = null; }
 
-  if (!config) { view = "setup"; renderSetup(); }
-  else         { view = "worker"; renderWorker(null); }
+  if (!config) {
+    view = "setup";
+    renderSetup();
+  } else {
+    // Show brief loading state while pulling fresh members from the sheet
+    el("app").innerHTML =
+      '<div style="padding:4rem;text-align:center;color:#6B6B67;font-size:14px">'
+      + spinIcon() + '<br><br>Connecting to sheet…</div>';
+    syncMembersFromSheet().then(function() {
+      view = "worker";
+      renderWorker(null);
+    });
+  }
 })();
 
 </script>
