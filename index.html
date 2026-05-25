@@ -396,8 +396,7 @@ function confirmSubmit() {
   var data = window._pendingData;
   var url  = config.scriptUrl + "?action=append&data=" + encodeURIComponent(JSON.stringify(data));
 
-  fetch(url, { redirect: "follow" })
-    .then(function(res) { return res.json(); })
+  jsonpCall(url)
     .then(function(json) {
       closeConfirm();
       if (json.success) renderWorker(true);
@@ -476,8 +475,7 @@ function refreshEntries() {
   var tbl = el("tbl-body");
   if (tbl) tbl.innerHTML = '<div style="padding:3rem;text-align:center;color:#6B6B67;font-size:14px">'+spinIcon()+'<br><br>Reading from Google Sheets…</div>';
 
-  fetch(config.scriptUrl + "?action=read", { redirect: "follow" })
-    .then(function(res) { return res.json(); })
+  jsonpCall(config.scriptUrl + "?action=read")
     .then(function(data) {
       entries = Array.isArray(data) ? data : [];
       populatePersonFilter();
@@ -696,6 +694,38 @@ function resetConfig() {
     renderSetup();
   }
 }
+
+// ── JSONP helper (bypasses CORS for Google Apps Script) ───────────────────
+function jsonpCall(url) {
+  return new Promise(function(resolve, reject) {
+    var cbName = "tscb_" + Date.now() + "_" + Math.floor(Math.random() * 9999);
+    var script = document.createElement("script");
+    var timer  = setTimeout(function() {
+      cleanup();
+      reject(new Error("Request timed out. Check your Apps Script URL is deployed correctly."));
+    }, 20000);
+
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cbName] = function(data) {
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = function() {
+      cleanup();
+      reject(new Error("Could not reach the Apps Script URL. Make sure it is deployed as a Web app with access set to Anyone."));
+    };
+
+    script.src = url + "&callback=" + cbName;
+    document.head.appendChild(script);
+  });
+}
+
 
 // ── BOOT ──────────────────────────────────────────────────────────────────
 (function boot() {
