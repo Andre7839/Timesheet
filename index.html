@@ -5,190 +5,153 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Team Timesheet</title>
 <style>
-/* ── Reset & base ── */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   background:#F7F7F5;color:#1C1C1A;min-height:100vh;font-size:15px;line-height:1.5;
   -webkit-tap-highlight-color:transparent}
 #app{max-width:680px;margin:0 auto;padding:24px 16px 60px}
 
-/* ── Typography ── */
-h1{font-size:21px;font-weight:500;letter-spacing:-0.3px}
+h1{font-size:21px;font-weight:500;letter-spacing:-.3px}
 h2{font-size:16px;font-weight:500}
 .sub{font-size:13px;color:#6B6B67;margin-top:3px}
-.lbl{display:block;font-size:12px;color:#6B6B67;margin-bottom:5px;font-weight:400}
+.lbl{display:block;font-size:12px;color:#6B6B67;margin-bottom:5px}
 .hint{font-size:12px;color:#9B9B97;margin-top:5px;line-height:1.4}
 
-/* ── Cards ── */
 .card{background:#fff;border:0.5px solid #E0DED8;border-radius:12px;padding:20px}
 .card+.card{margin-top:12px}
 .card-title{font-size:11px;font-weight:600;color:#6B6B67;letter-spacing:.06em;
   text-transform:uppercase;margin-bottom:14px}
 
-/* ── Form elements — 16px prevents iOS auto-zoom ── */
+/* 16px stops iOS Safari from zooming on focus */
 input,select,textarea{
-  width:100%;padding:0 11px;height:44px;
-  border:0.5px solid #D4D2CC;border-radius:8px;
-  font-size:16px;font-family:inherit;color:#1C1C1A;
-  background:#fff;outline:none;transition:border-color .15s;
-  -webkit-appearance:none;appearance:none}
-input:focus,select:focus,textarea:focus{
-  border-color:#888;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  width:100%;padding:0 11px;height:44px;border:0.5px solid #D4D2CC;border-radius:8px;
+  font-size:16px;font-family:inherit;color:#1C1C1A;background:#fff;outline:none;
+  transition:border-color .15s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:#888;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
 textarea{height:auto;padding:10px 11px;resize:vertical;line-height:1.5}
-input[type=date]{font-family:inherit}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 
-/* ── Buttons — 44px min for touch ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  padding:0 18px;min-height:44px;border-radius:8px;font-size:15px;font-weight:500;
-  cursor:pointer;border:none;transition:opacity .15s,background .15s;
-  white-space:nowrap;touch-action:manipulation;-webkit-touch-callout:none}
+/* 44px minimum for comfortable touch */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 18px;
+  min-height:44px;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;border:none;
+  transition:opacity .15s;white-space:nowrap;touch-action:manipulation}
 .btn-primary{background:#1C1C1A;color:#fff}
 .btn-primary:active{opacity:.8}
 .btn-primary:disabled{background:#C8C6C2;cursor:not-allowed}
 .btn-ghost{background:#fff;border:0.5px solid #D4D2CC;color:#1C1C1A}
 .btn-ghost:active{background:#F2F0EC}
-.btn-sm{min-height:34px;padding:0 12px;font-size:13px}
-.btn-danger{background:#fff;border:0.5px solid #D4D2CC;color:#A32D2D}
-.btn-danger:active{background:#FCEBEB}
+.btn-sm{min-height:36px;padding:0 12px;font-size:13px}
 .btn-full{width:100%}
+.btn-danger{background:#fff;border:0.5px solid #D4D2CC;color:#A32D2D}
 
-/* ── Layout helpers ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:12px}
 .row{display:flex;align-items:flex-end;gap:12px}
 .row .grow{flex:1;min-width:0}
 .row .w90{width:90px;flex-shrink:0}
-.gap-8{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.mt-12{margin-top:12px}
+.mt-10{margin-top:10px}
+.mt-14{margin-top:14px}
 .mt-16{margin-top:16px}
-.mt-20{margin-top:20px}
 
-/* ── Grid — collapses to 1 col on mobile ── */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.g4{display:grid;grid-template-columns:1fr 1fr 1fr 80px;gap:12px}
-
-/* ── Step progress ── */
-.steps{display:flex;gap:6px;margin:16px 0 22px}
-.step-seg{flex:1;height:3px;border-radius:2px;background:#E0DED8;transition:background .3s}
-.step-seg.on{background:#1C1C1A}
-
-/* ── Setup numbered steps ── */
-.s-step{display:flex;gap:11px;margin-bottom:14px}
-.s-num{width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;
-  font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;margin-top:2px}
-.s-body{flex:1;font-size:13px;color:#3C3C3A;line-height:1.5}
-
-/* ── Banners ── */
 .banner{padding:11px 14px;border-radius:8px;font-size:13px;
-  display:flex;align-items:flex-start;gap:8px;margin-top:12px;line-height:1.4}
-.b-ok{background:#E4F4EE;color:#0A5C3F;border:0.5px solid #9FE1CB}
-.b-err{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1}
+  display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.b-ok  {background:#E4F4EE;color:#0A5C3F;border:0.5px solid #9FE1CB}
+.b-err {background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1}
 .b-info{background:#EAF1FB;color:#185FA5;border:0.5px solid #B5D4F4}
+.b-warn{background:#FEF3C7;color:#92400E;border:0.5px solid #FCD34D}
 .banner svg{flex-shrink:0;margin-top:1px}
 
-/* ── Stats ── */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px}
 .stat{background:#F2F0EC;border-radius:8px;padding:12px 13px}
 .stat-lbl{font-size:11px;color:#6B6B67;margin-bottom:3px}
 .stat-val{font-size:20px;font-weight:500;line-height:1.1}
 .stat-sub{font-size:11px;color:#9B9B97;margin-top:2px}
 
-/* ── Badges ── */
-.badge{display:inline-block;padding:2px 8px;border-radius:100px;
-  font-size:11px;font-weight:500;white-space:nowrap}
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:500}
 .bFW{background:#E1F5EE;color:#0F6E56}
 .bDP{background:#E6F1FB;color:#185FA5}
 .bME{background:#FAEEDA;color:#854F0B}
 .bTR{background:#EEEDFE;color:#534AB7}
 .bRW{background:#FBEAF0;color:#993556}
 
-/* ── Avatar ── */
 .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
   justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
 
-/* ── Code block ── */
 .code-box{background:#1C1C1A;color:#B8E7C8;border-radius:8px;padding:13px;
   font-family:'SF Mono',SFMono-Regular,Consolas,monospace;font-size:11px;
   line-height:1.65;overflow-x:auto;white-space:pre;margin:10px 0}
 
-/* ── Top bar ── */
 .topbar{display:flex;justify-content:space-between;align-items:flex-start;
   margin-bottom:20px;gap:10px}
-.topbar-actions{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.topbar-btns{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
 
-/* ── Filter bar ── */
 .filter-bar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 13px;
   border-bottom:0.5px solid #E0DED8;align-items:center}
 .filter-bar select,.filter-bar input[type=date]{
-  width:auto;height:34px;font-size:13px;padding:0 8px;min-width:0;flex-shrink:1}
+  width:auto;height:34px;font-size:13px;padding:0 8px;flex-shrink:1}
 .filter-bar select{padding-right:26px;background-position:right 8px center}
 
-/* ── Table ── */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;
-  color:#6B6B67;letter-spacing:.05em;text-transform:uppercase;
-  background:#F7F7F5;border-bottom:0.5px solid #E0DED8;white-space:nowrap}
+thead th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:#6B6B67;
+  letter-spacing:.05em;text-transform:uppercase;background:#F7F7F5;
+  border-bottom:0.5px solid #E0DED8;white-space:nowrap}
 tbody tr{border-bottom:0.5px solid #EDECEA}
 tbody tr:last-child{border-bottom:none}
 tbody td{padding:9px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-tfoot td{padding:9px 12px;font-weight:500;background:#F7F7F5;
-  font-size:12px;color:#6B6B67;letter-spacing:.04em}
-.td-mono{font-family:'SF Mono',SFMono-Regular,Consolas,monospace;
-  font-size:12px;font-weight:500}
+tfoot td{padding:9px 12px;font-weight:500;background:#F7F7F5;font-size:12px;color:#6B6B67}
+.td-mono{font-family:'SF Mono',SFMono-Regular,Consolas,monospace;font-size:12px;font-weight:500}
 
-/* ── People grid ── */
 .people-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.person-item{display:flex;align-items:center;gap:8px}
-
-/* ── Member row ── */
-.member-row{display:flex;align-items:center;gap:10px;padding:10px 0;
+.p-item{display:flex;align-items:center;gap:8px}
+.m-row{display:flex;align-items:center;gap:10px;padding:10px 0;
   border-bottom:0.5px solid #EDECEA}
-.member-row:last-child{border-bottom:none}
+.m-row:last-child{border-bottom:none}
 
-/* ── Confirm overlay ── */
-#confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);
+#confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);
   display:flex;align-items:center;justify-content:center;z-index:999;padding:16px}
-.confirm-box{background:#fff;border-radius:14px;padding:24px;
-  width:100%;max-width:380px;border:0.5px solid #E0DED8}
-.confirm-row{display:flex;border-bottom:0.5px solid #F0EDEA}
-.confirm-row:last-child{border-bottom:none}
-.confirm-lbl{padding:7px 0;color:#6B6B67;font-size:13px;width:90px;flex-shrink:0}
-.confirm-val{padding:7px 0;font-weight:500;font-size:13px;flex:1;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-box{background:#fff;border-radius:14px;padding:24px;width:100%;max-width:380px}
+.c-row{display:flex;border-bottom:0.5px solid #F0EDEA}
+.c-row:last-child{border-bottom:none}
+.c-lbl{padding:7px 0;color:#6B6B67;font-size:13px;width:88px;flex-shrink:0}
+.c-val{padding:7px 0;font-weight:500;font-size:13px;overflow:hidden;text-overflow:ellipsis}
 
-/* ── Spinner ── */
+/* setup steps */
+.s-step{display:flex;gap:11px;margin-bottom:14px}
+.s-num{width:22px;height:22px;border-radius:50%;background:#1C1C1A;color:#fff;
+  font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px}
+.s-body{flex:1;font-size:13px;color:#3C3C3A;line-height:1.5}
+
+.highlight-box{background:#F0F7FF;border:0.5px solid #B5D4F4;border-radius:8px;
+  padding:12px 14px;font-size:13px;margin:10px 0}
+.highlight-box code{font-family:'SF Mono',SFMono-Regular,Consolas,monospace;
+  font-size:12px;color:#185FA5;word-break:break-all}
+
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{animation:spin .7s linear infinite;display:inline-block}
-
-/* ── Loading screen ── */
-.loading-screen{padding:4rem 1rem;text-align:center;color:#6B6B67;font-size:14px}
-.loading-screen p{margin-top:10px}
-
-/* ── Empty state ── */
+.loading{padding:4rem 1rem;text-align:center;color:#6B6B67;font-size:14px}
+.loading p{margin-top:10px}
 .empty{padding:3rem 1rem;text-align:center;color:#6B6B67;font-size:14px}
 
-/* ── Mobile breakpoints ── */
 @media(max-width:520px){
-  .g2,.g3,.g4{grid-template-columns:1fr}
+  .g4,.g2{grid-template-columns:1fr 1fr}
   .row{flex-wrap:wrap}
   .row .w90{width:100%}
   .stats{grid-template-columns:1fr 1fr}
-  .topbar-actions .btn span{display:none}
-  .topbar-actions .btn{padding:0 10px}
+  .topbar-btns .btn span{display:none}
+  .topbar-btns .btn{padding:0 10px}
 }
-@media(max-width:380px){
-  .stats{grid-template-columns:1fr}
-}
+@media(max-width:360px){.g4,.g2,.stats{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- Hidden iframe + form: all writes go here — no CORS, works on every browser -->
+<!-- ALL writes go through here: hidden form + hidden iframe.
+     No CORS. Works on every browser including iOS Safari.      -->
 <iframe id="ts-sink" name="ts-sink" style="display:none" title="submit"></iframe>
 <form id="ts-form" method="get" target="ts-sink" style="display:none">
   <input id="f-action" name="action" value="">
@@ -198,740 +161,652 @@ tfoot td{padding:9px 12px;font-weight:500;background:#F7F7F5;
 <div id="app"></div>
 
 <script>
-/* ════════════════════════════════════════════════════════════════════
-   CONSTANTS
-   ════════════════════════════════════════════════════════════════════ */
-var PROJECTS = ["AVS", "Biostimulants", "Woodland project"];
-var CATS     = ["Field work", "Data processing", "Meeting", "Training", "Report writing"];
-var TIMES    = ["AM", "PM"];
-var TODAY    = new Date().toISOString().slice(0, 10);
-var SHEET_URL= "https://docs.google.com/spreadsheets/d/1c49drHeXzoVV_G_2P8e46VtsVTQTEvhfX5pm30c8XUg/edit";
+/* ── CONFIG (baked in) ────────────────────────────────────────── */
+var SHEET_ID  = "1c49drHeXzoVV_G_2P8e46VtsVTQTEvhfX5pm30c8XUg";
+var SHEET_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit";
 
-var CAT_CLS  = {
-  "Field work":      "bFW",
-  "Data processing": "bDP",
-  "Meeting":         "bME",
-  "Training":        "bTR",
-  "Report writing":  "bRW"
-};
-var AV_PAL = [
-  ["#E6F1FB","#185FA5"],["#EEEDFE","#534AB7"],["#E1F5EE","#0F6E56"],
-  ["#FAEEDA","#854F0B"],["#FBEAF0","#993556"],["#FAECE7","#993C1D"]
-];
+var PROJECTS  = ["AVS","Biostimulants","Woodland project"];
+var CATS      = ["Field work","Data processing","Meeting","Training","Report writing"];
+var TIMES     = ["AM","PM"];
+var TODAY     = new Date().toISOString().slice(0,10);
+var CAT_CLS   = {"Field work":"bFW","Data processing":"bDP","Meeting":"bME",
+                 "Training":"bTR","Report writing":"bRW"};
+var AV_PAL    = [["#E6F1FB","#185FA5"],["#EEEDFE","#534AB7"],["#E1F5EE","#0F6E56"],
+                 ["#FAEEDA","#854F0B"],["#FBEAF0","#993556"],["#FAECE7","#993C1D"]];
 
-var SCRIPT_CODE =
-'function doGet(e) {\n' +
-'  var cb = e.parameter.callback || "";\n' +
-'  var out = "";\n' +
-'  try {\n' +
-'    var a = e.parameter.action;\n' +
-'    if      (a==="append")      out = appendRow(e.parameter.data);\n' +
-'    else if (a==="read")        out = readRows();\n' +
-'    else if (a==="readMembers") out = readMembers();\n' +
-'    else if (a==="saveMembers") out = saveMembers(e.parameter.data);\n' +
-'    else if (a==="ping")        out = JSON.stringify({ok:true});\n' +
-'    else                        out = JSON.stringify({error:"unknown action"});\n' +
-'  } catch(err) { out = JSON.stringify({error:err.toString()}); }\n' +
-'  if (cb) return ContentService.createTextOutput(cb+"("+out+")")\n' +
-'            .setMimeType(ContentService.MimeType.JAVASCRIPT);\n' +
-'  return ContentService.createTextOutput(out)\n' +
-'           .setMimeType(ContentService.MimeType.JSON);\n' +
-'}\n' +
-'\n' +
-'var LOG = "Time Log", CFG = "Config";\n' +
-'var HDR = ["Timestamp","Name","Date","Day","Project","Category","Time","Task","Hours"];\n' +
-'\n' +
-'function appendRow(enc) {\n' +
-'  var d = JSON.parse(decodeURIComponent(enc));\n' +
-'  var ss = SpreadsheetApp.getActiveSpreadsheet();\n' +
-'  var sh = ss.getSheetByName(LOG);\n' +
-'  if (!sh) {\n' +
-'    sh = ss.insertSheet(LOG);\n' +
-'    var h = sh.getRange(1,1,1,HDR.length);\n' +
-'    h.setValues([HDR]); h.setFontWeight("bold"); h.setBackground("#E8EAED");\n' +
-'    sh.setFrozenRows(1);\n' +
-'    [160,130,100,100,160,140,60,280,70].forEach(function(w,i){sh.setColumnWidth(i+1,w);});\n' +
-'  }\n' +
-'  var day = Utilities.formatDate(new Date(d.date+"T12:00:00"),\n' +
-'              Session.getScriptTimeZone(),"EEEE");\n' +
-'  sh.appendRow([new Date(),d.name,d.date,day,d.project,d.category,d.time,d.task,parseFloat(d.hours)]);\n' +
-'  sh.getRange(sh.getLastRow(),HDR.length).setNumberFormat("0.00");\n' +
-'  return JSON.stringify({success:true});\n' +
-'}\n' +
-'\n' +
-'function readRows() {\n' +
-'  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(LOG);\n' +
-'  if (!sh) return "[]";\n' +
-'  var v = sh.getDataRange().getValues();\n' +
-'  if (v.length<=1) return "[]";\n' +
-'  var hdr = v[0].map(function(h){return h.toString().trim().toLowerCase();});\n' +
-'  return JSON.stringify(v.slice(1).map(function(r){\n' +
-'    var o={};\n' +
-'    hdr.forEach(function(h,i){\n' +
-'      o[h] = r[i] instanceof Date\n' +
-'        ? Utilities.formatDate(r[i],Session.getScriptTimeZone(),"yyyy-MM-dd HH:mm:ss")\n' +
-'        : (r[i]||"").toString();\n' +
-'    });\n' +
-'    return o;\n' +
-'  }));\n' +
-'}\n' +
-'\n' +
-'function readMembers() {\n' +
-'  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CFG);\n' +
-'  if (!sh || sh.getLastRow()===0) return JSON.stringify({members:[]});\n' +
-'  var v = sh.getRange(1,1,sh.getLastRow(),1).getValues();\n' +
-'  return JSON.stringify({members:v.map(function(r){return r[0]?r[0].toString().trim():"";}).filter(Boolean)});\n' +
-'}\n' +
-'\n' +
-'function saveMembers(enc) {\n' +
-'  var d = JSON.parse(decodeURIComponent(enc));\n' +
-'  var ss = SpreadsheetApp.getActiveSpreadsheet();\n' +
-'  var sh = ss.getSheetByName(CFG)||ss.insertSheet(CFG);\n' +
-'  sh.clearContents();\n' +
-'  if (d.members&&d.members.length)\n' +
-'    sh.getRange(1,1,d.members.length,1).setValues(d.members.map(function(m){return[m];}));\n' +
-'  return JSON.stringify({success:true});\n' +
-'}';
+/* ── RUNTIME STATE ───────────────────────────────────────────── */
+var scriptUrl = "";   // read from Config tab on every load
+var members   = [];   // read from Config tab on every load
+var pmPin     = "";   // stored in localStorage, PM's device only
+var entries   = [];   // loaded when PM opens dashboard
+var filters   = {person:"",project:"",cat:"",from:"",to:""};
 
-/* ════════════════════════════════════════════════════════════════════
-   STATE
-   ════════════════════════════════════════════════════════════════════ */
-var scriptUrl = "";    // stored in localStorage
-var pmPin     = "";    // stored in localStorage
-var members   = [];    // loaded from sheet on every boot
-var entries   = [];    // loaded from sheet (dashboard only)
-var filters   = { person:"", project:"", cat:"", from:"", to:"" };
-
-/* ════════════════════════════════════════════════════════════════════
-   HELPERS
-   ════════════════════════════════════════════════════════════════════ */
-function el(id) { return document.getElementById(id); }
-
-function esc(s) {
-  return String(s||"")
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+/* ── HELPERS ─────────────────────────────────────────────────── */
+function el(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
     .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
-
-function av(name) {
-  var c = AV_PAL[(name||"").charCodeAt(0) % AV_PAL.length];
-  var i = (name||"?").split(" ").map(function(w){return w[0]||"";}).join("").slice(0,2).toUpperCase();
+function av(name){
+  var c=AV_PAL[(name||"").charCodeAt(0)%AV_PAL.length];
+  var i=(name||"?").split(" ").map(function(w){return w[0]||"";}).join("").slice(0,2).toUpperCase();
   return '<div class="av" style="background:'+c[0]+';color:'+c[1]+'">'+i+'</div>';
 }
-
-function badge(cat) {
-  return '<span class="badge '+(CAT_CLS[cat]||"")+'">'+esc(cat)+'</span>';
+function badge(cat){return '<span class="badge '+(CAT_CLS[cat]||"")+'">'+esc(cat)+'</span>';}
+function ico(n){
+  var d={check:"M20 6 9 17l-5-5",x:"M18 6 6 18M6 6l12 12",
+    arr_r:"M5 12h14M12 5l7 7-7 7",arr_l:"M19 12H5M12 19l-7-7 7-7",
+    lock:"M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM7 11V7a5 5 0 0 1 10 0v4",
+    unlock:"M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM7 11V7a5 5 0 1 1 9.9-1",
+    refresh:"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5",
+    ext:"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3",
+    exit:"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
+    send:"M22 2 11 13M22 2 15 22 11 13 2 9l20-7z",
+    copy:"M20 9h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2zM5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 0 2 2v1",
+    dash:"M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
+    team:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+    filter:"M22 3H2l8 9.46V19l4 2V12.46L22 3z",
+    plus:"M12 5v14M5 12h14",
+    clock:"M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 6v6l4 2",
+    warn:"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"};
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+(d[n]||"")+'"/></svg>';
+}
+function spin(){ return '<span class="spin">'+ico("refresh")+'</span>'; }
+function banner(t,m){
+  var cls={ok:"b-ok",err:"b-err",info:"b-info",warn:"b-warn"}[t]||"b-info";
+  var i={ok:"check",err:"x",info:"clock",warn:"warn"}[t]||"check";
+  return '<div class="banner '+cls+'">'+ico(i)+'<span>'+esc(m)+'</span></div>';
+}
+function showLoading(msg){
+  el("app").innerHTML='<div class="loading">'+spin()+'<p>'+esc(msg)+'</p></div>';
 }
 
-function ico(name) {
-  var paths = {
-    check:   "M20 6 9 17l-5-5",
-    x:       "M18 6 6 18M6 6l12 12",
-    arr_r:   "M5 12h14M12 5l7 7-7 7",
-    arr_l:   "M19 12H5M12 19l-7-7 7-7",
-    lock:    "M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM7 11V7a5 5 0 0 1 10 0v4",
-    unlock:  "M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM7 11V7a5 5 0 1 1 9.9-1",
-    refresh: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5",
-    ext:     "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3",
-    exit:    "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
-    send:    "M22 2 11 13M22 2 15 22 11 13 2 9l20-7z",
-    copy:    "M20 9h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2zM5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 0 2 2v1",
-    clock:   "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 6v6l4 2",
-    dash:    "M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z",
-    team:    "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
-    filter:  "M22 3H2l8 9.46V19l4 2V12.46L22 3z",
-    plus:    "M12 5v14M5 12h14"
-  };
-  return '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+(paths[name]||"")+'"/></svg>';
-}
-
-function spinHtml() {
-  return '<span class="spin">'+ico("refresh")+'</span>';
-}
-
-function banner(type, msg) {
-  var cls = type === "ok" ? "b-ok" : (type === "info" ? "b-info" : "b-err");
-  var i   = type === "ok" ? "check" : "x";
-  return '<div class="banner '+cls+'">'+ico(i)+'<span>'+esc(msg)+'</span></div>';
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   JSONP  (reads only — loads members and dashboard entries)
-   ════════════════════════════════════════════════════════════════════ */
-function jsonp(url) {
-  return new Promise(function(resolve, reject) {
-    var id  = "cb_" + Date.now() + "_" + (Math.random()*9999|0);
-    var tag = document.createElement("script");
-    var tim = setTimeout(function() {
-      cleanup(); reject(new Error("Timed out"));
-    }, 20000);
-    function cleanup() {
-      clearTimeout(tim);
-      delete window[id];
-      if (tag.parentNode) tag.parentNode.removeChild(tag);
+/* ── READ CONFIG FROM GOOGLE SHEET ───────────────────────────────
+   Uses the Google Visualization API (gviz) — works on any device
+   as long as the sheet is shared "Anyone with the link can view".
+   No Apps Script URL needed for this step.
+   Config tab structure:
+     A1 = Apps Script web app URL
+     A2, A3, A4 ... = team member names
+   ─────────────────────────────────────────────────────────────── */
+function loadConfig(){
+  return new Promise(function(resolve,reject){
+    var id="gv_"+Date.now()+"_"+(Math.random()*9999|0);
+    var tag=document.createElement("script");
+    var tim=setTimeout(function(){cleanup();reject(new Error("timeout"));},15000);
+    function cleanup(){
+      clearTimeout(tim); delete window[id];
+      if(tag.parentNode) tag.parentNode.removeChild(tag);
     }
-    window[id] = function(data) { cleanup(); resolve(data); };
-    tag.onerror = function() { cleanup(); reject(new Error("Script load failed")); };
-    tag.src = url + "&callback=" + id;
+    window[id]=function(resp){
+      cleanup();
+      if(resp.status!=="ok"){reject(new Error(resp.errors?resp.errors[0].message:"Sheet error"));return;}
+      var rows=(resp.table&&resp.table.rows)||[];
+      var vals=rows.map(function(r){
+        return r.c&&r.c[0]&&r.c[0].v ? r.c[0].v.toString().trim() : "";
+      }).filter(Boolean);
+      resolve(vals);
+    };
+    tag.onerror=function(){cleanup();reject(new Error("network"));};
+    tag.src="https://docs.google.com/spreadsheets/d/"+SHEET_ID
+      +"/gviz/tq?tqx=responseHandler:"+id+"&sheet=Config&range=A1:A50";
     document.head.appendChild(tag);
   });
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   FORM SUBMIT  (writes only — uses hidden form + iframe, no CORS)
-   Works on every browser including iOS Safari.
-   ════════════════════════════════════════════════════════════════════ */
-function formSubmit(action, data) {
-  return new Promise(function(resolve) {
-    var sink = el("ts-sink");
-    var timer = setTimeout(function() {
-      sink.onload = null;
-      resolve({ success: true });   // assume success after 12 s
-    }, 12000);
-    sink.onload = function() {
-      clearTimeout(timer);
-      sink.onload = null;
-      resolve({ success: true });
-    };
-    el("f-action").value = action;
-    el("f-data").value   = encodeURIComponent(JSON.stringify(data));
-    el("ts-form").action = scriptUrl;
+/* ── JSONP  (reads timesheet entries for PM dashboard) ────────── */
+function jsonp(url){
+  return new Promise(function(resolve,reject){
+    var id="cb_"+Date.now()+"_"+(Math.random()*9999|0);
+    var tag=document.createElement("script");
+    var tim=setTimeout(function(){cleanup();reject(new Error("timeout"));},20000);
+    function cleanup(){
+      clearTimeout(tim); delete window[id];
+      if(tag.parentNode) tag.parentNode.removeChild(tag);
+    }
+    window[id]=function(d){cleanup();resolve(d);};
+    tag.onerror=function(){cleanup();reject(new Error("failed"));};
+    tag.src=url+"&callback="+id;
+    document.head.appendChild(tag);
+  });
+}
+
+/* ── FORM SUBMIT  (all writes — no CORS, works everywhere) ───── */
+function formSubmit(action,data){
+  return new Promise(function(resolve){
+    var sink=el("ts-sink");
+    var timer=setTimeout(function(){sink.onload=null;resolve({success:true});},12000);
+    sink.onload=function(){clearTimeout(timer);sink.onload=null;resolve({success:true});};
+    el("f-action").value=action;
+    el("f-data").value=encodeURIComponent(JSON.stringify(data));
+    el("ts-form").action=scriptUrl;
     el("ts-form").submit();
   });
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   SETUP  (enter Apps Script URL once — minimal friction)
-   ════════════════════════════════════════════════════════════════════ */
-function renderSetup() {
-  el("app").innerHTML =
+/* ── ADMIN SETUP SCREEN ──────────────────────────────────────────
+   Shown only when the Config tab is missing or empty.
+   Normal users never see this.
+   ─────────────────────────────────────────────────────────────── */
+var SCRIPT_CODE=
+'function doGet(e){\n'+
+'  var cb=e.parameter.callback||"",out="";\n'+
+'  try{\n'+
+'    var a=e.parameter.action;\n'+
+'    if     (a==="append")      out=appendRow(e.parameter.data);\n'+
+'    else if(a==="read")        out=readRows();\n'+
+'    else if(a==="saveMembers") out=saveMembers(e.parameter.data);\n'+
+'    else                       out=JSON.stringify({error:"unknown action"});\n'+
+'  }catch(err){out=JSON.stringify({error:err.toString()});}\n'+
+'  if(cb) return ContentService.createTextOutput(cb+"("+out+")")\n'+
+'           .setMimeType(ContentService.MimeType.JAVASCRIPT);\n'+
+'  return ContentService.createTextOutput(out)\n'+
+'           .setMimeType(ContentService.MimeType.JSON);\n'+
+'}\n'+
+'var LOG="Time Log",CFG="Config";\n'+
+'var HDR=["Timestamp","Name","Date","Day","Project","Category","Time","Task","Hours"];\n'+
+'function appendRow(enc){\n'+
+'  var d=JSON.parse(decodeURIComponent(enc));\n'+
+'  var ss=SpreadsheetApp.getActiveSpreadsheet();\n'+
+'  var sh=ss.getSheetByName(LOG);\n'+
+'  if(!sh){\n'+
+'    sh=ss.insertSheet(LOG);\n'+
+'    var h=sh.getRange(1,1,1,HDR.length);\n'+
+'    h.setValues([HDR]);h.setFontWeight("bold");h.setBackground("#E8EAED");\n'+
+'    sh.setFrozenRows(1);\n'+
+'    [160,130,100,100,160,140,60,280,70].forEach(function(w,i){sh.setColumnWidth(i+1,w);});\n'+
+'  }\n'+
+'  var day=Utilities.formatDate(new Date(d.date+"T12:00:00"),Session.getScriptTimeZone(),"EEEE");\n'+
+'  sh.appendRow([new Date(),d.name,d.date,day,d.project,d.category,d.time,d.task,parseFloat(d.hours)]);\n'+
+'  sh.getRange(sh.getLastRow(),HDR.length).setNumberFormat("0.00");\n'+
+'  return JSON.stringify({success:true});\n'+
+'}\n'+
+'function readRows(){\n'+
+'  var sh=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(LOG);\n'+
+'  if(!sh) return "[]";\n'+
+'  var v=sh.getDataRange().getValues();\n'+
+'  if(v.length<=1) return "[]";\n'+
+'  var hdr=v[0].map(function(h){return h.toString().trim().toLowerCase();});\n'+
+'  return JSON.stringify(v.slice(1).map(function(r){\n'+
+'    var o={};\n'+
+'    hdr.forEach(function(h,i){\n'+
+'      o[h]=r[i] instanceof Date\n'+
+'        ?Utilities.formatDate(r[i],Session.getScriptTimeZone(),"yyyy-MM-dd HH:mm:ss")\n'+
+'        :(r[i]||"").toString();\n'+
+'    });return o;\n'+
+'  }));\n'+
+'}\n'+
+'function saveMembers(enc){\n'+
+'  var d=JSON.parse(decodeURIComponent(enc));\n'+
+'  var ss=SpreadsheetApp.getActiveSpreadsheet();\n'+
+'  var sh=ss.getSheetByName(CFG)||ss.insertSheet(CFG);\n'+
+'  var url=sh.getLastRow()>=1?sh.getRange(1,1).getValue().toString():"";\n'+
+'  sh.clearContents();\n'+
+'  if(url) sh.getRange(1,1).setValue(url);\n'+
+'  var m=d.members||[];\n'+
+'  if(m.length) sh.getRange(2,1,m.length,1).setValues(m.map(function(x){return[x];}));\n'+
+'  return JSON.stringify({success:true});\n'+
+'}';
+
+function renderAdminSetup(){
+  el("app").innerHTML=
     '<div style="margin-bottom:20px">'
-    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'
-    + ico("clock") + '<h1>Team Timesheet</h1></div>'
-    + '<p class="sub">One-time connection to your Google Sheet.</p>'
-    + '</div>'
-    + '<div class="card">'
-    + '<div class="card-title">Step 1 — Add the Apps Script to your sheet</div>'
-    + '<div class="s-step"><div class="s-num">1</div><div class="s-body">'
-    + '<a href="'+esc(SHEET_URL)+'" target="_blank" style="color:#185FA5;font-weight:500">'
-    + 'Open your Google Sheet</a>, then go to '
-    + '<strong>Extensions &rarr; Apps Script</strong>. '
-    + 'Delete any existing code, paste the script below, save (Ctrl+S).</div></div>'
-    + '<div class="code-box" id="script-code">'+esc(SCRIPT_CODE)+'</div>'
-    + '<button class="btn btn-ghost btn-sm" id="copy-btn" onclick="copyScript()">'
-    + ico("copy") + ' Copy script</button>'
-    + '<div class="s-step mt-16"><div class="s-num">2</div><div class="s-body">'
-    + 'Click <strong>Deploy &rarr; New deployment</strong>.<br>'
-    + 'Set: Type = Web app &bull; Execute as = Me &bull; Access = Anyone.<br>'
-    + 'Click Deploy, authorise, then copy the <strong>Web app URL</strong>.</div></div>'
-    + '<div class="s-step"><div class="s-num">3</div><div class="s-body">'
-    + 'Paste the Web app URL below:</div></div>'
-    + '<label class="lbl">Apps Script Web app URL</label>'
-    + '<input type="url" id="setup-url" placeholder="https://script.google.com/macros/s/…/exec"'
-    + ' value="'+esc(localStorage.getItem("ts-url")||"")+'" style="margin-bottom:8px">'
-    + '<p class="hint">This is the only value you need to enter. Your sheet and member list are managed from here.</p>'
-    + '<div id="setup-msg" style="font-size:13px;color:#A32D2D;margin-top:8px"></div>'
-    + '<div class="mt-16">'
-    + '<button class="btn btn-primary" onclick="setupConnect()">'
-    + ico("arr_r") + ' Connect &amp; continue</button>'
-    + '</div>'
-    + '</div>';
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'+ico("warn")
+    +'<h1>Admin setup required</h1></div>'
+    +'<p class="sub">The team timesheet is not configured yet. Only the admin needs to do this once.</p>'
+    +'</div>'
+    +'<div class="card" style="margin-bottom:12px">'
+    +'<div class="card-title">How it works after setup</div>'
+    +'<div class="banner b-info" style="margin-bottom:0">'+ico("team")
+    +'<span>Once set up, your team just opens '
+    +'<strong>https://andre7839.github.io/Timesheet/</strong>'
+    +' on any device and the form appears immediately. No configuration needed.</span></div>'
+    +'</div>'
+    +'<div class="card">'
+    +'<div class="card-title">One-time admin setup — 4 steps</div>'
+    +'<div class="s-step"><div class="s-num">1</div><div class="s-body">'
+    +'Share your Google Sheet as <strong>"Anyone with the link can view"</strong>.<br>'
+    +'(Share button &rarr; Change to anyone with the link &rarr; Viewer)<br>'
+    +'<a href="'+esc(SHEET_URL)+'" target="_blank" style="color:#185FA5">Open your sheet &rarr;</a>'
+    +'</div></div>'
+    +'<div class="s-step"><div class="s-num">2</div><div class="s-body">'
+    +'In the sheet, <strong>create a tab named exactly: <code style="color:#185FA5">Config</code></strong><br>'
+    +'Fill it in like this:'
+    +'<div class="highlight-box">'
+    +'<b>A1</b> &rarr; paste your Apps Script web app URL here<br>'
+    +'<b>A2</b> &rarr; first team member name (e.g. Alice Smith)<br>'
+    +'<b>A3</b> &rarr; second team member name<br>'
+    +'<b>A4, A5 ...</b> &rarr; more names'
+    +'</div>'
+    +'</div></div>'
+    +'<div class="s-step"><div class="s-num">3</div><div class="s-body">'
+    +'To get the Apps Script URL: in your sheet go to '
+    +'<strong>Extensions &rarr; Apps Script</strong>. '
+    +'Delete any existing code, paste the script below, save (Ctrl+S), then '
+    +'<strong>Deploy &rarr; New deployment</strong>.<br>'
+    +'Type = Web app &bull; Execute as = Me &bull; Access = Anyone.<br>'
+    +'Copy the <strong>Web app URL</strong> and put it in <strong>Config A1</strong>.'
+    +'</div></div>'
+    +'<div class="code-box" id="sc">'+esc(SCRIPT_CODE)+'</div>'
+    +'<button class="btn btn-ghost btn-sm" id="copy-btn" onclick="doCopy()">'
+    +ico("copy")+' Copy script</button>'
+    +'<div class="s-step" style="margin-top:14px"><div class="s-num">4</div><div class="s-body">'
+    +'Once the Config tab is saved, click the button below.'
+    +'</div></div>'
+    +'<button class="btn btn-primary mt-10" onclick="retryLoad()">'
+    +ico("refresh")+' I\'ve set it up — load the app</button>'
+    +'<div id="retry-msg" style="margin-top:10px;font-size:13px;color:#A32D2D"></div>'
+    +'</div>';
 }
 
-function copyScript() {
-  navigator.clipboard.writeText(SCRIPT_CODE).then(function() {
-    var b = el("copy-btn");
-    if (b) { b.innerHTML = ico("check") + " Copied!";
-      setTimeout(function(){ b.innerHTML = ico("copy") + " Copy script"; }, 2000); }
+function doCopy(){
+  navigator.clipboard.writeText(SCRIPT_CODE).then(function(){
+    var b=el("copy-btn");
+    if(b){b.innerHTML=ico("check")+" Copied!";
+      setTimeout(function(){b.innerHTML=ico("copy")+" Copy script";},2000);}
   });
 }
 
-function setupConnect() {
-  var url = (el("setup-url").value || "").trim();
-  if (url.indexOf("script.google.com/macros") === -1) {
-    el("setup-msg").textContent = "Paste the Apps Script Web app URL (must contain script.google.com/macros)";
-    return;
-  }
-  localStorage.setItem("ts-url", url);
-  scriptUrl = url;
+function retryLoad(){
+  var msg=el("retry-msg");
+  if(msg) msg.textContent="";
   showLoading("Connecting to sheet\u2026");
-  loadMembers().then(function() {
-    renderWorker(null);
-  }).catch(function() {
-    renderWorker(null);   // show form even if member load fails
-  });
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   LOAD MEMBERS FROM SHEET  (called on every boot and after edits)
-   ════════════════════════════════════════════════════════════════════ */
-function loadMembers() {
-  return jsonp(scriptUrl + "?action=readMembers")
-    .then(function(data) {
-      if (data && Array.isArray(data.members)) {
-        members = data.members;
+  loadConfig()
+    .then(function(vals){
+      if(!vals||vals.length===0||!vals[0].startsWith("http")){
+        renderAdminSetup();
+        setTimeout(function(){
+          var m=el("retry-msg");
+          if(m) m.textContent="Config tab not found or A1 is not a URL. Check the sheet and try again.";
+        },50);
+        return;
       }
+      scriptUrl=vals[0];
+      members=vals.slice(1);
+      renderWorker(null);
+    })
+    .catch(function(e){
+      renderAdminSetup();
+      setTimeout(function(){
+        var m=el("retry-msg");
+        if(m) m.textContent="Could not read sheet: "+e.message+". Make sure sharing is set to Anyone with the link.";
+      },50);
     });
 }
 
-function showLoading(msg) {
-  el("app").innerHTML =
-    '<div class="loading-screen">' + spinHtml() + '<p>' + esc(msg) + '</p></div>';
-}
+/* ── WORKER VIEW (shown to ALL users immediately) ────────────── */
+function renderWorker(result){
+  var nameOpts='<option value="">Select your name\u2026</option>'
+    +members.map(function(m){return '<option>'+esc(m)+'</option>';}).join("");
+  var projOpts=PROJECTS.map(function(p){return '<option>'+esc(p)+'</option>';}).join("");
+  var catOpts =CATS.map(function(c){return '<option>'+esc(c)+'</option>';}).join("");
+  var timeOpts=TIMES.map(function(t){return '<option>'+esc(t)+'</option>';}).join("");
 
-/* ════════════════════════════════════════════════════════════════════
-   WORKER VIEW
-   ════════════════════════════════════════════════════════════════════ */
-function renderWorker(result) {
-  var nameOpts = '<option value="">Select your name\u2026</option>'
-    + members.map(function(m) {
-        return '<option>'+esc(m)+'</option>';
-      }).join("");
+  var resultHtml="";
+  if(result===true)
+    resultHtml='<div class="banner b-ok mt-10">'+ico("check")+'<span>Entry saved to the team Google Sheet.</span></div>';
+  else if(result!==null&&result!==undefined)
+    resultHtml='<div class="banner b-err mt-10">'+ico("x")+'<span>'+esc(result)+'</span></div>';
 
-  var projOpts = PROJECTS.map(function(p){ return '<option>'+esc(p)+'</option>'; }).join("");
-  var catOpts  = CATS.map(function(c)    { return '<option>'+esc(c)+'</option>'; }).join("");
-  var timeOpts = TIMES.map(function(t)   { return '<option>'+esc(t)+'</option>'; }).join("");
-
-  var resultHtml = "";
-  if (result === true)
-    resultHtml = banner("ok", "Entry saved to the team Google Sheet.");
-  else if (result !== null && result !== undefined)
-    resultHtml = banner("err", "Could not save \u2014 " + result);
-
-  var noMembers = members.length === 0
-    ? '<div class="banner b-info" style="margin-bottom:14px">'+ico("team")
-      + '<span>No team members yet. The manager needs to add names via <strong>Manager login &rarr; Manage team</strong>.</span></div>'
-    : "";
-
-  el("app").innerHTML =
+  el("app").innerHTML=
     '<div class="topbar">'
-    + '<div><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">'
-    + ico("clock") + '<h1>Log your time</h1></div>'
-    + '<p class="sub">Saved directly to the shared Google Sheet</p></div>'
-    + '<button class="btn btn-ghost btn-sm" onclick="goPin()">'
-    + ico("lock") + ' <span>Manager</span></button>'
-    + '</div>'
-    + noMembers
-    + '<div class="card">'
-    + '<div style="margin-bottom:14px">'
-    + '<label class="lbl">Who are you?</label>'
-    + '<select id="w-name">'+nameOpts+'</select>'
-    + '</div>'
-    + '<div class="g4" style="margin-bottom:12px">'
-    + '<div><label class="lbl">Date</label>'
-    + '<input type="date" id="w-date" value="'+TODAY+'"></div>'
-    + '<div><label class="lbl">Project</label>'
-    + '<select id="w-project">'+projOpts+'</select></div>'
-    + '<div><label class="lbl">Category</label>'
-    + '<select id="w-cat">'+catOpts+'</select></div>'
-    + '<div><label class="lbl">Time</label>'
-    + '<select id="w-time">'+timeOpts+'</select></div>'
-    + '</div>'
-    + '<div class="row" style="margin-bottom:4px">'
-    + '<div class="grow"><label class="lbl">Task description</label>'
-    + '<input type="text" id="w-task" placeholder="What did you work on?" autocomplete="off"></div>'
-    + '<div class="w90"><label class="lbl">Hours</label>'
-    + '<input type="number" id="w-hours" placeholder="0.0" min="0.25" max="24" step="0.25" inputmode="decimal"></div>'
-    + '</div>'
-    + '<div class="mt-12">'
-    + '<button class="btn btn-primary btn-full" id="w-submit" onclick="workerSubmit()">'
-    + ico("send") + ' Submit entry</button>'
-    + '</div>'
-    + resultHtml
-    + '</div>'
-    + '<p style="font-size:11px;color:#9B9B97;text-align:center;margin-top:10px">'
-    + 'Only the project manager can view all entries</p>';
+    +'<div><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">'
+    +ico("clock")+'<h1>Log your time</h1></div>'
+    +'<p class="sub">Saved directly to the team Google Sheet</p></div>'
+    +'<button class="btn btn-ghost btn-sm" onclick="goPin()">'
+    +ico("lock")+' <span>Manager</span></button>'
+    +'</div>'
+    +'<div class="card">'
+    +'<div style="margin-bottom:14px"><label class="lbl">Who are you?</label>'
+    +'<select id="w-name">'+nameOpts+'</select></div>'
+    +'<div class="g4" style="margin-bottom:12px">'
+    +'<div><label class="lbl">Date</label>'
+    +'<input type="date" id="w-date" value="'+TODAY+'"></div>'
+    +'<div><label class="lbl">Project</label>'
+    +'<select id="w-project">'+projOpts+'</select></div>'
+    +'<div><label class="lbl">Category</label>'
+    +'<select id="w-cat">'+catOpts+'</select></div>'
+    +'<div><label class="lbl">Time</label>'
+    +'<select id="w-time">'+timeOpts+'</select></div>'
+    +'</div>'
+    +'<div class="row" style="margin-bottom:4px">'
+    +'<div class="grow"><label class="lbl">Task description</label>'
+    +'<input type="text" id="w-task" placeholder="What did you work on?" autocomplete="off"></div>'
+    +'<div class="w90"><label class="lbl">Hours</label>'
+    +'<input type="number" id="w-hours" placeholder="0.0" min="0.25" max="24" step="0.25" inputmode="decimal"></div>'
+    +'</div>'
+    +'<div class="mt-14">'
+    +'<button class="btn btn-primary btn-full" onclick="workerSubmit()">'
+    +ico("send")+' Submit entry</button>'
+    +'</div>'
+    +resultHtml
+    +'</div>'
+    +'<p style="font-size:11px;color:#9B9B97;text-align:center;margin-top:10px">'
+    +'Only the project manager can view all entries</p>';
 }
 
-function workerSubmit() {
-  var name  = (el("w-name")    || {}).value || "";
-  var date  = (el("w-date")    || {}).value || "";
-  var proj  = (el("w-project") || {}).value || "";
-  var cat   = (el("w-cat")     || {}).value || "";
-  var time  = (el("w-time")    || {}).value || "AM";
-  var task  = ((el("w-task")   || {}).value || "").trim();
-  var hrs   = parseFloat((el("w-hours") || {}).value);
-
-  if (!name) { alert("Please select your name.");    return; }
-  if (!task) { alert("Please describe the task.");   return; }
-  if (!hrs || hrs <= 0) { alert("Please enter valid hours."); return; }
-
-  showConfirm({ name:name, date:date, project:proj, category:cat,
-                time:time, task:task, hours:hrs });
+function workerSubmit(){
+  var name =(el("w-name")||{}).value||"";
+  var date =(el("w-date")||{}).value||"";
+  var proj =(el("w-project")||{}).value||"";
+  var cat  =(el("w-cat")||{}).value||"";
+  var time =(el("w-time")||{}).value||"AM";
+  var task =((el("w-task")||{}).value||"").trim();
+  var hrs  =parseFloat((el("w-hours")||{}).value);
+  if(!name){alert("Please select your name.");return;}
+  if(!task){alert("Please describe the task.");return;}
+  if(!hrs||hrs<=0){alert("Please enter valid hours.");return;}
+  showConfirm({name:name,date:date,project:proj,category:cat,time:time,task:task,hours:hrs});
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   CONFIRMATION DIALOG
-   ════════════════════════════════════════════════════════════════════ */
-function showConfirm(data) {
-  window._pending = data;
-  var rows = [
-    ["Name",     data.name],
-    ["Date",     data.date],
-    ["Time",     data.time],
-    ["Project",  data.project],
-    ["Category", data.category],
-    ["Task",     data.task],
-    ["Hours",    data.hours]
-  ].map(function(r) {
-    return '<div class="confirm-row">'
-      + '<div class="confirm-lbl">'+esc(r[0])+'</div>'
-      + '<div class="confirm-val">'+esc(String(r[1]))+'</div>'
-      + '</div>';
-  }).join("");
-
-  var ov = document.createElement("div");
-  ov.id = "confirm-overlay";
-  ov.innerHTML =
-    '<div class="confirm-box">'
-    + '<h2 style="margin-bottom:4px">Confirm entry</h2>'
-    + '<p class="sub" style="margin-bottom:16px">Check details before submitting.</p>'
-    + rows
-    + '<div class="g2 mt-16">'
-    + '<button class="btn btn-ghost" onclick="closeConfirm()">'+ico("x")+' Edit</button>'
-    + '<button class="btn btn-primary" id="confirm-yes" onclick="doSubmit()">'+ico("send")+' Submit</button>'
-    + '</div>'
-    + '</div>';
+/* ── CONFIRM DIALOG ──────────────────────────────────────────── */
+function showConfirm(data){
+  window._pending=data;
+  var rows=[["Name",data.name],["Date",data.date],["Time",data.time],
+    ["Project",data.project],["Category",data.category],["Task",data.task],["Hours",data.hours]]
+    .map(function(r){
+      return '<div class="c-row"><div class="c-lbl">'+esc(r[0])+'</div>'
+        +'<div class="c-val">'+esc(String(r[1]))+'</div></div>';
+    }).join("");
+  var ov=document.createElement("div");
+  ov.id="confirm-overlay";
+  ov.innerHTML='<div class="c-box"><h2 style="margin-bottom:3px">Confirm entry</h2>'
+    +'<p class="sub" style="margin-bottom:14px">Check details before submitting.</p>'
+    +rows
+    +'<div class="g2 mt-16">'
+    +'<button class="btn btn-ghost" onclick="closeConfirm()">'+ico("x")+' Edit</button>'
+    +'<button class="btn btn-primary" id="c-yes" onclick="doSubmit()">'+ico("send")+' Submit</button>'
+    +'</div></div>';
   document.body.appendChild(ov);
 }
-
-function closeConfirm() {
-  var ov = el("confirm-overlay");
-  if (ov) ov.parentNode.removeChild(ov);
-}
-
-function doSubmit() {
-  var btn = el("confirm-yes");
-  if (btn) { btn.innerHTML = spinHtml() + " Saving\u2026"; btn.disabled = true; }
-
-  formSubmit("append", window._pending).then(function() {
-    closeConfirm();
-    renderWorker(true);
+function closeConfirm(){var o=el("confirm-overlay");if(o)o.parentNode.removeChild(o);}
+function doSubmit(){
+  var btn=el("c-yes");
+  if(btn){btn.innerHTML=spin()+" Saving\u2026";btn.disabled=true;}
+  formSubmit("append",window._pending).then(function(){
+    closeConfirm(); renderWorker(true);
   });
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   PIN  (manager login)
-   ════════════════════════════════════════════════════════════════════ */
-function goPin() {
-  var isFirstTime = !pmPin;
-  el("app").innerHTML =
+/* ── MANAGER PIN ─────────────────────────────────────────────── */
+function goPin(){
+  var first=!pmPin;
+  el("app").innerHTML=
     '<div style="max-width:340px;margin:0 auto;padding-top:10px">'
-    + '<button class="btn btn-ghost btn-sm" onclick="renderWorker(null)" style="margin-bottom:20px">'
-    + ico("arr_l") + ' Back</button>'
-    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">'
-    + ico("lock") + '<h1>Manager login</h1></div>'
-    + (isFirstTime
-       ? '<div class="banner b-info" style="margin-bottom:14px">'+ico("check")
-         + '<span>First time: create your manager PIN below.</span></div>'
-       : '')
-    + '<label class="lbl">'+(isFirstTime ? "Create PIN (4\u20138 digits)" : "Enter your PIN")+'</label>'
-    + '<input type="password" id="pin-inp" maxlength="8" '
-    + 'placeholder="'+(isFirstTime ? "e.g. 1234" : "")+'" style="margin-bottom:10px" '
-    + 'onkeydown="if(event.key===\'Enter\')checkPin()">'
-    + (isFirstTime
-       ? '<label class="lbl mt-12">Confirm PIN</label>'
-         + '<input type="password" id="pin-inp2" maxlength="8" style="margin-bottom:10px" '
-         + 'onkeydown="if(event.key===\'Enter\')checkPin()">'
-       : '')
-    + '<div id="pin-err" style="font-size:13px;color:#A32D2D;margin-bottom:10px;display:none">'
-    + 'Incorrect PIN.</div>'
-    + '<button class="btn btn-primary" onclick="checkPin()">'
-    + ico("unlock") + (isFirstTime ? ' Create PIN &amp; continue' : ' Sign in') + '</button>'
-    + '</div>';
-  setTimeout(function(){ var i=el("pin-inp"); if(i) i.focus(); }, 50);
+    +'<button class="btn btn-ghost btn-sm" onclick="renderWorker(null)" style="margin-bottom:20px">'
+    +ico("arr_l")+' Back</button>'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">'
+    +ico("lock")+'<h1>Manager login</h1></div>'
+    +(first?'<div class="banner b-info" style="margin-bottom:14px">'+ico("clock")
+      +'<span>First time: create your manager PIN.</span></div>':"")
+    +'<label class="lbl">'+(first?"Create PIN (4\u20138 digits)":"Enter your PIN")+'</label>'
+    +'<input type="password" id="pin1" maxlength="8" style="margin-bottom:10px" '
+    +'onkeydown="if(event.key===\'Enter\')checkPin()">'
+    +(first?'<label class="lbl mt-14">Confirm PIN</label>'
+      +'<input type="password" id="pin2" maxlength="8" style="margin-bottom:10px" '
+      +'onkeydown="if(event.key===\'Enter\')checkPin()">': "")
+    +'<div id="pin-err" style="font-size:13px;color:#A32D2D;margin-bottom:10px;display:none">'
+    +(first?"PINs do not match.":"Incorrect PIN.")+'</div>'
+    +'<button class="btn btn-primary" onclick="checkPin()">'
+    +ico("unlock")+(first?" Create &amp; continue":" Sign in")+'</button>'
+    +'</div>';
+  setTimeout(function(){var i=el("pin1");if(i)i.focus();},50);
 }
-
-function checkPin() {
-  var val = (el("pin-inp")||{}).value || "";
-  if (!pmPin) {
-    // First time: create PIN
-    var val2 = (el("pin-inp2")||{}).value || "";
-    if (val.length < 4)  { el("pin-err").textContent="PIN must be 4+ digits."; el("pin-err").style.display="block"; return; }
-    if (val !== val2)    { el("pin-err").textContent="PINs do not match.";     el("pin-err").style.display="block"; return; }
-    pmPin = val;
-    localStorage.setItem("ts-pin", pmPin);
+function checkPin(){
+  var v=(el("pin1")||{}).value||"";
+  if(!pmPin){
+    var v2=(el("pin2")||{}).value||"";
+    if(v.length<4){showPinErr("PIN must be 4+ digits.");return;}
+    if(v!==v2){showPinErr("PINs do not match.");return;}
+    pmPin=v; localStorage.setItem("ts-pin",pmPin);
   } else {
-    if (val !== pmPin) {
-      el("pin-err").style.display = "block";
-      el("pin-inp").value = "";
-      el("pin-inp").focus();
-      return;
+    if(v!==pmPin){
+      showPinErr("Incorrect PIN.");
+      el("pin1").value=""; el("pin1").focus(); return;
     }
   }
   renderDashboard();
 }
+function showPinErr(m){var e=el("pin-err");if(e){e.textContent=m;e.style.display="block";}}
 
-/* ════════════════════════════════════════════════════════════════════
-   DASHBOARD
-   ════════════════════════════════════════════════════════════════════ */
-function renderDashboard() {
-  el("app").innerHTML =
+/* ── DASHBOARD ───────────────────────────────────────────────── */
+function renderDashboard(){
+  el("app").innerHTML=
     '<div class="topbar">'
-    + '<div><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">'
-    + ico("dash") + '<h1>Manager dashboard</h1></div>'
-    + '<p class="sub">Live data from Google Sheets</p></div>'
-    + '<div class="topbar-actions">'
-    + '<button class="btn btn-ghost btn-sm" id="ref-btn" onclick="refreshDash()">'+ico("refresh")+' <span>Refresh</span></button>'
-    + '<button class="btn btn-ghost btn-sm" onclick="renderManageTeam()">'+ico("team")+' <span>Team</span></button>'
-    + '<a class="btn btn-ghost btn-sm" href="'+esc(SHEET_URL)+'" target="_blank">'+ico("ext")+' <span>Sheet</span></a>'
-    + '<button class="btn btn-ghost btn-sm" onclick="renderWorker(null)">'+ico("exit")+' <span>Sign out</span></button>'
-    + '</div></div>'
-    + '<div class="stats" id="d-stats"><div class="stat"><div class="stat-lbl">Loading\u2026</div></div></div>'
-    + '<div class="card" id="d-people" style="display:none;margin-bottom:12px">'
-    + '<div class="card-title">Hours by person</div>'
-    + '<div class="people-grid" id="d-people-grid"></div></div>'
-    + '<div class="card" style="padding:0;overflow:hidden">'
-    + '<div class="filter-bar" id="d-filters">'
-    + '<span style="font-size:12px;color:#6B6B67;display:flex;align-items:center;gap:4px">'+ico("filter")+' Filter</span>'
-    + '<select id="f-person" onchange="applyFilters()"><option value="">All people</option></select>'
-    + '<select id="f-project" onchange="applyFilters()"><option value="">All projects</option>'
-    + PROJECTS.map(function(p){return '<option>'+esc(p)+'</option>';}).join("")+'</select>'
-    + '<select id="f-cat" onchange="applyFilters()"><option value="">All categories</option>'
-    + CATS.map(function(c){return '<option>'+esc(c)+'</option>';}).join("")+'</select>'
-    + '<input type="date" id="f-from" onchange="applyFilters()" title="From">'
-    + '<span style="font-size:12px;color:#9B9B97">&rarr;</span>'
-    + '<input type="date" id="f-to"   onchange="applyFilters()" title="To">'
-    + '<button class="btn btn-ghost btn-sm" id="clr-btn" onclick="clearFilters()" style="display:none">Clear</button>'
-    + '</div>'
-    + '<div id="d-table"></div></div>'
-    + '<div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">'
-    + '<button class="btn btn-danger btn-sm" onclick="resetApp()">Reset setup</button>'
-    + '<span style="font-size:11px;color:#9B9B97" id="d-hint"></span>'
-    + '</div>';
-
+    +'<div><div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">'
+    +ico("dash")+'<h1>Manager dashboard</h1></div>'
+    +'<p class="sub">Live data from your Google Sheet</p></div>'
+    +'<div class="topbar-btns">'
+    +'<button class="btn btn-ghost btn-sm" id="ref-btn" onclick="refreshDash()">'+ico("refresh")+' <span>Refresh</span></button>'
+    +'<button class="btn btn-ghost btn-sm" onclick="renderManageTeam()">'+ico("team")+' <span>Team</span></button>'
+    +'<a class="btn btn-ghost btn-sm" href="'+esc(SHEET_URL)+'" target="_blank">'+ico("ext")+' <span>Sheet</span></a>'
+    +'<button class="btn btn-ghost btn-sm" onclick="renderWorker(null)">'+ico("exit")+' <span>Out</span></button>'
+    +'</div></div>'
+    +'<div class="stats" id="d-stats"><div class="stat"><div class="stat-lbl">Loading\u2026</div></div></div>'
+    +'<div class="card" id="d-ppl" style="display:none;margin-bottom:12px">'
+    +'<div class="card-title">Hours by person</div>'
+    +'<div class="people-grid" id="d-ppl-grid"></div></div>'
+    +'<div class="card" style="padding:0;overflow:hidden">'
+    +'<div class="filter-bar">'
+    +'<span style="font-size:12px;color:#6B6B67;display:flex;align-items:center;gap:4px">'+ico("filter")+' Filter</span>'
+    +'<select id="f-per" onchange="applyF()"><option value="">All people</option></select>'
+    +'<select id="f-prj" onchange="applyF()"><option value="">All projects</option>'
+    +PROJECTS.map(function(p){return '<option>'+esc(p)+'</option>';}).join("")+'</select>'
+    +'<select id="f-cat" onchange="applyF()"><option value="">All categories</option>'
+    +CATS.map(function(c){return '<option>'+esc(c)+'</option>';}).join("")+'</select>'
+    +'<input type="date" id="f-fr" onchange="applyF()" title="From">'
+    +'<span style="font-size:12px;color:#9B9B97">&rarr;</span>'
+    +'<input type="date" id="f-to" onchange="applyF()" title="To">'
+    +'<button class="btn btn-ghost btn-sm" id="clr-btn" onclick="clearF()" style="display:none">Clear</button>'
+    +'</div>'
+    +'<div id="d-tbl"></div></div>'
+    +'<div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">'
+    +'<button class="btn btn-danger btn-sm" onclick="resetAdmin()">Reset PIN</button>'
+    +'<span style="font-size:11px;color:#9B9B97" id="d-hint"></span>'
+    +'</div>';
   refreshDash();
 }
 
-function refreshDash() {
-  var btn = el("ref-btn");
-  if (btn) { btn.innerHTML = spinHtml() + " <span>Refreshing\u2026</span>"; btn.disabled = true; }
-  var tbl = el("d-table");
-  if (tbl) tbl.innerHTML = '<div class="empty">'+spinHtml()+'<p>Reading from Google Sheets\u2026</p></div>';
-
-  jsonp(scriptUrl + "?action=read")
-    .then(function(data) {
-      entries = Array.isArray(data) ? data : [];
-      buildPersonFilter();
-      applyFilters();
-      if (btn) { btn.innerHTML = ico("refresh")+" <span>Refresh</span>"; btn.disabled = false; }
-      var h = el("d-hint"); if (h) h.textContent = entries.length + " total entries";
+function refreshDash(){
+  var btn=el("ref-btn");
+  if(btn){btn.innerHTML=spin()+" <span>Loading\u2026</span>";btn.disabled=true;}
+  var tbl=el("d-tbl");
+  if(tbl) tbl.innerHTML='<div class="empty">'+spin()+'<p>Reading from Google Sheets\u2026</p></div>';
+  jsonp(scriptUrl+"?action=read")
+    .then(function(data){
+      entries=Array.isArray(data)?data:[];
+      buildPerFilter();
+      applyF();
+      if(btn){btn.innerHTML=ico("refresh")+" <span>Refresh</span>";btn.disabled=false;}
+      var h=el("d-hint");if(h)h.textContent=entries.length+" total entries";
     })
-    .catch(function(e) {
-      if (tbl) tbl.innerHTML = '<div class="empty" style="color:#A32D2D">Could not load data. '
-        + 'Check your Apps Script is deployed correctly.<br><small>'+esc(e.message)+'</small></div>';
-      if (btn) { btn.innerHTML = ico("refresh")+" <span>Refresh</span>"; btn.disabled = false; }
+    .catch(function(e){
+      if(tbl) tbl.innerHTML='<div class="empty" style="color:#A32D2D">Could not load data: '+esc(e.message)+'</div>';
+      if(btn){btn.innerHTML=ico("refresh")+" <span>Refresh</span>";btn.disabled=false;}
     });
 }
 
-function buildPersonFilter() {
-  var ppl = [];
-  entries.forEach(function(e){ if(e.name && ppl.indexOf(e.name)===-1) ppl.push(e.name); });
+function buildPerFilter(){
+  var ppl=[];
+  entries.forEach(function(e){if(e.name&&ppl.indexOf(e.name)===-1)ppl.push(e.name);});
   ppl.sort();
-  var fp = el("f-person");
-  if (fp) fp.innerHTML = '<option value="">All people</option>'
-    + ppl.map(function(p){return '<option>'+esc(p)+'</option>';}).join("");
+  var fp=el("f-per");
+  if(fp) fp.innerHTML='<option value="">All people</option>'
+    +ppl.map(function(p){return '<option>'+esc(p)+'</option>';}).join("");
 }
 
-function getFiltered() {
-  return entries.filter(function(e) {
-    if (filters.person  && e.name     !== filters.person)  return false;
-    if (filters.project && e.project  !== filters.project) return false;
-    if (filters.cat     && e.category !== filters.cat)     return false;
-    if (filters.from    && (e.date||"") < filters.from)    return false;
-    if (filters.to      && (e.date||"") > filters.to)      return false;
+function getFilt(){
+  return entries.filter(function(e){
+    if(filters.person&&e.name!==filters.person)return false;
+    if(filters.project&&e.project!==filters.project)return false;
+    if(filters.cat&&e.category!==filters.cat)return false;
+    if(filters.from&&(e.date||"")<filters.from)return false;
+    if(filters.to&&(e.date||"")>filters.to)return false;
     return true;
   });
 }
 
-function applyFilters() {
-  filters.person  = (el("f-person") ||{}).value||"";
-  filters.project = (el("f-project")||{}).value||"";
-  filters.cat     = (el("f-cat")    ||{}).value||"";
-  filters.from    = (el("f-from")   ||{}).value||"";
-  filters.to      = (el("f-to")     ||{}).value||"";
-  var any = filters.person||filters.project||filters.cat||filters.from||filters.to;
-  var cb = el("clr-btn"); if (cb) cb.style.display = any ? "" : "none";
-  renderStats();
-  renderTable();
+function applyF(){
+  filters.person =(el("f-per")||{}).value||"";
+  filters.project=(el("f-prj")||{}).value||"";
+  filters.cat    =(el("f-cat")||{}).value||"";
+  filters.from   =(el("f-fr") ||{}).value||"";
+  filters.to     =(el("f-to") ||{}).value||"";
+  var any=filters.person||filters.project||filters.cat||filters.from||filters.to;
+  var cb=el("clr-btn");if(cb)cb.style.display=any?"":"none";
+  renderStats(); renderTbl();
 }
 
-function clearFilters() {
-  filters = { person:"", project:"", cat:"", from:"", to:"" };
-  ["f-person","f-project","f-cat","f-from","f-to"].forEach(function(id){
-    var e=el(id); if(e) e.value="";
-  });
-  var cb=el("clr-btn"); if(cb) cb.style.display="none";
-  renderStats(); renderTable();
+function clearF(){
+  filters={person:"",project:"",cat:"",from:"",to:""};
+  ["f-per","f-prj","f-cat","f-fr","f-to"].forEach(function(id){var e=el(id);if(e)e.value="";});
+  var cb=el("clr-btn");if(cb)cb.style.display="none";
+  renderStats();renderTbl();
 }
 
-function renderStats() {
-  var f = getFiltered();
-  var hrs = f.reduce(function(s,e){return s+parseFloat(e.hours||0);},0);
-  var ppl = []; f.forEach(function(e){if(e.name&&ppl.indexOf(e.name)===-1)ppl.push(e.name);});
-  var prj = []; f.forEach(function(e){if(e.project&&prj.indexOf(e.project)===-1)prj.push(e.project);});
-  var sg = el("d-stats");
-  if (sg) sg.innerHTML = [
-    {l:"Total entries", v:f.length,        s:"in selection"},
-    {l:"Total hours",   v:hrs.toFixed(1),  s:"logged"},
-    {l:"People",        v:ppl.length,      s:"active"},
-    {l:"Projects",      v:prj.length,      s:"tracked"}
-  ].map(function(s){
-    return '<div class="stat"><div class="stat-lbl">'+s.l+'</div>'
-      +'<div class="stat-val">'+s.v+'</div>'
-      +'<div class="stat-sub">'+s.s+'</div></div>';
-  }).join("");
-
+function renderStats(){
+  var f=getFilt();
+  var hrs=f.reduce(function(s,e){return s+parseFloat(e.hours||0);},0);
+  var ppl=[];f.forEach(function(e){if(e.name&&ppl.indexOf(e.name)===-1)ppl.push(e.name);});
+  var prj=[];f.forEach(function(e){if(e.project&&prj.indexOf(e.project)===-1)prj.push(e.project);});
+  var sg=el("d-stats");
+  if(sg) sg.innerHTML=[{l:"Entries",v:f.length,s:"selected"},{l:"Hours",v:hrs.toFixed(1),s:"total"},
+    {l:"People",v:ppl.length,s:"active"},{l:"Projects",v:prj.length,s:"tracked"}]
+    .map(function(s){return '<div class="stat"><div class="stat-lbl">'+s.l+'</div>'
+      +'<div class="stat-val">'+s.v+'</div><div class="stat-sub">'+s.s+'</div></div>';}).join("");
   var byP={};
   f.forEach(function(e){byP[e.name]=(byP[e.name]||0)+parseFloat(e.hours||0);});
   var bp=Object.keys(byP).map(function(k){return[k,byP[k]];}).sort(function(a,b){return b[1]-a[1];});
-  var pc=el("d-people"),pg=el("d-people-grid");
+  var pc=el("d-ppl"),pg=el("d-ppl-grid");
   if(pc&&pg){
     if(bp.length){
       pc.style.display="block";
       pg.innerHTML=bp.map(function(x){
-        return '<div class="person-item">'+av(x[0])
+        return '<div class="p-item">'+av(x[0])
           +'<div><div style="font-size:13px;font-weight:500">'+esc(x[0])+'</div>'
           +'<div style="font-size:12px;color:#6B6B67">'+x[1].toFixed(1)+' hrs</div></div></div>';
       }).join("");
-    } else { pc.style.display="none"; }
+    } else pc.style.display="none";
   }
 }
 
-function renderTable() {
-  var f   = getFiltered();
-  var tbl = el("d-table");
-  if (!tbl) return;
-  if (!entries.length) {
-    tbl.innerHTML='<div class="empty">No entries yet. Click Refresh once your team submits.</div>';return;
-  }
-  if (!f.length) {
-    tbl.innerHTML='<div class="empty">No entries match the current filters.</div>';return;
-  }
-  var sorted = f.slice().sort(function(a,b){return (b.date||"").localeCompare(a.date||"");});
-  var total  = f.reduce(function(s,e){return s+parseFloat(e.hours||0);},0);
-  var rows   = sorted.map(function(e){
+function renderTbl(){
+  var f=getFilt(),tbl=el("d-tbl");
+  if(!tbl)return;
+  if(!entries.length){tbl.innerHTML='<div class="empty">No entries yet. Refresh after your team submits.</div>';return;}
+  if(!f.length){tbl.innerHTML='<div class="empty">No entries match the current filters.</div>';return;}
+  var srt=f.slice().sort(function(a,b){return(b.date||"").localeCompare(a.date||"");});
+  var tot=f.reduce(function(s,e){return s+parseFloat(e.hours||0);},0);
+  var rows=srt.map(function(e){
     return '<tr>'
-      +'<td style="width:120px"><div style="display:flex;align-items:center;gap:6px">'
+      +'<td style="width:115px"><div style="display:flex;align-items:center;gap:6px">'
       +av(e.name||"?")+'<span style="font-weight:500;overflow:hidden;text-overflow:ellipsis">'+esc(e.name||"")+'</span></div></td>'
-      +'<td style="width:88px;color:#6B6B67;font-size:12px">'+esc(e.date||"")+'</td>'
-      +'<td style="width:110px">'+esc(e.project||"")+'</td>'
-      +'<td style="width:110px">'+badge(e.category||"")+'</td>'
+      +'<td style="width:85px;color:#6B6B67;font-size:12px">'+esc(e.date||"")+'</td>'
+      +'<td style="width:105px">'+esc(e.project||"")+'</td>'
+      +'<td style="width:108px">'+badge(e.category||"")+'</td>'
       +'<td style="width:42px;font-weight:500;color:#555">'+esc(e.time||"")+'</td>'
       +'<td style="color:#6B6B67">'+esc(e.task||"")+'</td>'
-      +'<td style="width:58px" class="td-mono">'+parseFloat(e.hours||0).toFixed(2)+'</td>'
+      +'<td style="width:56px" class="td-mono">'+parseFloat(e.hours||0).toFixed(2)+'</td>'
       +'</tr>';
   }).join("");
   tbl.innerHTML='<div class="tbl-wrap"><table>'
-    +'<colgroup><col style="width:120px"><col style="width:88px"><col style="width:110px">'
-    +'<col style="width:110px"><col style="width:42px"><col><col style="width:58px"></colgroup>'
+    +'<colgroup><col style="width:115px"><col style="width:85px"><col style="width:105px">'
+    +'<col style="width:108px"><col style="width:42px"><col><col style="width:56px"></colgroup>'
     +'<thead><tr><th>Person</th><th>Date</th><th>Project</th>'
     +'<th>Category</th><th>AM/PM</th><th>Task</th><th>Hours</th></tr></thead>'
     +'<tbody>'+rows+'</tbody>'
     +'<tfoot><tr><td colspan="6">Total &mdash; '+f.length+' '+(f.length===1?"entry":"entries")+'</td>'
-    +'<td class="td-mono" style="font-size:14px;color:#1C1C1A">'+total.toFixed(2)+'</td></tr></tfoot>'
+    +'<td class="td-mono" style="font-size:14px;color:#1C1C1A">'+tot.toFixed(2)+'</td></tr></tfoot>'
     +'</table></div>';
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   MANAGE TEAM
-   ════════════════════════════════════════════════════════════════════ */
-function renderManageTeam(msg) {
-  var memberRows = members.map(function(m, i) {
-    return '<div class="member-row">'
-      + av(m)
-      + '<span style="flex:1;font-size:14px">'+esc(m)+'</span>'
-      + '<button class="btn btn-ghost btn-sm" style="color:#A32D2D" onclick="removeMember('+i+')">'
-      + ico("x") + ' Remove</button>'
-      + '</div>';
+/* ── MANAGE TEAM ─────────────────────────────────────────────── */
+function renderManageTeam(msg){
+  var mrows=members.map(function(m,i){
+    return '<div class="m-row">'+av(m)
+      +'<span style="flex:1;font-size:14px">'+esc(m)+'</span>'
+      +'<button class="btn btn-ghost btn-sm" style="color:#A32D2D" onclick="removeMember('+i+')">'
+      +ico("x")+' Remove</button></div>';
   }).join("");
-
-  var successHtml = msg
-    ? '<div class="banner b-ok" style="margin-bottom:14px">'+ico("check")+'<span>'+esc(msg)+'</span></div>' : "";
-
-  el("app").innerHTML =
+  var okHtml=msg?'<div class="banner b-ok" style="margin-bottom:12px">'+ico("check")+'<span>'+esc(msg)+'</span></div>':"";
+  el("app").innerHTML=
     '<div style="margin-bottom:20px">'
-    + '<button class="btn btn-ghost btn-sm" onclick="renderDashboard()" style="margin-bottom:16px">'
-    + ico("arr_l") + ' Dashboard</button>'
-    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'
-    + ico("team") + '<h1>Manage team members</h1></div>'
-    + '<p class="sub">Names here appear in the submission form on all devices.</p>'
-    + '</div>'
-    + successHtml
-    + '<div class="card" style="margin-bottom:12px">'
-    + '<div class="card-title">Current members ('+members.length+')</div>'
-    + (memberRows || '<p style="font-size:13px;color:#9B9B97">No members yet. Add below.</p>')
-    + '</div>'
-    + '<div class="card">'
-    + '<div class="card-title">Add member</div>'
-    + '<div class="row">'
-    + '<div class="grow"><label class="lbl">Full name</label>'
-    + '<input type="text" id="new-name" placeholder="e.g. David Lee" autocomplete="off"></div>'
-    + '<div style="flex-shrink:0;padding-top:17px">'
-    + '<button class="btn btn-primary" onclick="addMember()">'+ico("plus")+' Add</button>'
-    + '</div></div>'
-    + '<div id="add-err" style="font-size:13px;color:#A32D2D;margin-top:8px;display:none"></div>'
-    + '</div>';
-
-  setTimeout(function(){var i=el("new-name");if(i)i.focus();},50);
-  el("new-name").addEventListener("keydown", function(e){if(e.key==="Enter")addMember();});
+    +'<button class="btn btn-ghost btn-sm" onclick="renderDashboard()" style="margin-bottom:16px">'
+    +ico("arr_l")+' Dashboard</button>'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'
+    +ico("team")+'<h1>Manage team members</h1></div>'
+    +'<p class="sub">Changes sync immediately to all devices via the Google Sheet.</p>'
+    +'</div>'
+    +okHtml
+    +'<div class="card" style="margin-bottom:12px">'
+    +'<div class="card-title">Current members ('+members.length+')</div>'
+    +(mrows||'<p style="font-size:13px;color:#9B9B97">No members yet. Add below.</p>')
+    +'</div>'
+    +'<div class="card">'
+    +'<div class="card-title">Add member</div>'
+    +'<div class="row">'
+    +'<div class="grow"><label class="lbl">Full name</label>'
+    +'<input type="text" id="new-n" placeholder="e.g. David Lee" autocomplete="off"></div>'
+    +'<div style="flex-shrink:0;padding-top:17px">'
+    +'<button class="btn btn-primary" onclick="addMember()">'+ico("plus")+' Add</button>'
+    +'</div></div>'
+    +'<div id="add-err" style="font-size:13px;color:#A32D2D;margin-top:8px;display:none"></div>'
+    +'</div>';
+  setTimeout(function(){var i=el("new-n");if(i){i.focus();i.addEventListener("keydown",function(e){if(e.key==="Enter")addMember();});}},50);
 }
 
-function addMember() {
-  var name = ((el("new-name")||{}).value||"").trim();
-  if (!name) { showAddErr("Enter a name."); return; }
-  var lower = members.map(function(m){return m.toLowerCase();});
-  if (lower.indexOf(name.toLowerCase()) !== -1) { showAddErr(name+" is already in the list."); return; }
+function addMember(){
+  var name=((el("new-n")||{}).value||"").trim();
+  if(!name){showAE("Enter a name.");return;}
+  if(members.map(function(m){return m.toLowerCase();}).indexOf(name.toLowerCase())!==-1){
+    showAE(name+" is already in the list.");return;
+  }
   members.push(name);
-  syncMembers(name + " added.");
+  syncMembers(name+" added.");
 }
 
-function removeMember(idx) {
-  var name = members[idx];
-  if (!confirm("Remove "+name+"?\nThis does not delete their existing entries.")) return;
-  members.splice(idx, 1);
-  syncMembers(name + " removed.");
+function removeMember(i){
+  var name=members[i];
+  if(!confirm("Remove "+name+"?\nThis does not delete their existing timesheet entries."))return;
+  members.splice(i,1);
+  syncMembers(name+" removed.");
 }
 
-function showAddErr(msg) {
-  var e = el("add-err"); if(e){e.textContent=msg;e.style.display="block";}
-}
+function showAE(m){var e=el("add-err");if(e){e.textContent=m;e.style.display="block";}}
 
-function syncMembers(successMsg) {
-  // Write to sheet via hidden form (no CORS), then re-render
-  formSubmit("saveMembers", { members: members }).then(function() {
-    renderManageTeam(successMsg);
+function syncMembers(msg){
+  formSubmit("saveMembers",{members:members}).then(function(){
+    renderManageTeam(msg);
   });
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   RESET
-   ════════════════════════════════════════════════════════════════════ */
-function resetApp() {
-  if (!confirm("Reset setup?\n\nThis clears your saved Apps Script URL and PIN from this device.\nYour Google Sheet data is NOT deleted.")) return;
-  localStorage.removeItem("ts-url");
+function resetAdmin(){
+  if(!confirm("Clear your manager PIN from this device?\n(You will be asked to create a new one on next login.)"))return;
   localStorage.removeItem("ts-pin");
-  scriptUrl = ""; pmPin = ""; members = [];
-  renderSetup();
+  pmPin="";
+  renderWorker(null);
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   BOOT
-   ════════════════════════════════════════════════════════════════════ */
-(function boot() {
-  scriptUrl = localStorage.getItem("ts-url") || "";
-  pmPin     = localStorage.getItem("ts-pin") || "";
-
-  if (!scriptUrl) {
-    renderSetup();
-    return;
-  }
-
-  // Load members fresh from sheet on every boot — keeps all devices in sync
-  showLoading("Connecting to sheet\u2026");
-  loadMembers()
-    .then(function()  { renderWorker(null); })
-    .catch(function() { renderWorker(null); });   // show form even if load fails
+/* ── BOOT ────────────────────────────────────────────────────────
+   Reads Config tab from Google Sheet on EVERY load.
+   All devices always get the same scriptUrl + members list.
+   No per-device setup required for users.
+   ─────────────────────────────────────────────────────────────── */
+(function boot(){
+  pmPin=localStorage.getItem("ts-pin")||"";
+  showLoading("Loading\u2026");
+  loadConfig()
+    .then(function(vals){
+      if(!vals||vals.length===0||!vals[0]||vals[0].indexOf("http")!==0){
+        renderAdminSetup(); return;
+      }
+      scriptUrl=vals[0];
+      members=vals.slice(1);
+      renderWorker(null);
+    })
+    .catch(function(){
+      renderAdminSetup();
+    });
 })();
 </script>
 </body>
